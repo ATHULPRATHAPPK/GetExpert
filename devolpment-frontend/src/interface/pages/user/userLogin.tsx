@@ -1,23 +1,48 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import InputField from '../../components/InputField';
-import Button from '../../components/Button';
-
-import '../../styles/index.css';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import InputField from "../../components/InputField";
+import Button from "../../components/Button";
+import { loginUser } from "../../../application/service/authService";
+import "../../styles/index.css";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false); // State to track if an error occurred
 
-  const handleSignInClick = () => {
-    console.log('Sign in clicked');
+  const handleSignInClick = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Sign in clicked");
+    console.log(email);
+    handleLogin();
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await loginUser(email, password);
+      console.log("response", response);
+      if (response) {
+        navigate("/");
+      } else {
+        setErrorMessage("Invalid email or password.");
+        setHasError(true); // Set error flag
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+      setHasError(true); // Set error flag
+    }
   };
 
   const handleGoogleSignInClick = () => {
-    console.log('Google Sign in clicked');
+    console.log("Google Sign in clicked");
   };
 
   const handleSignUpClick = () => {
-    navigate('/register');
+    navigate("/register");
   };
 
   return (
@@ -29,15 +54,35 @@ const LoginPage: React.FC = () => {
         <div className="bg-white p-8 rounded-3xl shadow-md w-11/12 lg:w-[28rem]">
           <h2 className="text-2xl font-semibold mb-4">Welcome to GetExpert</h2>
           <h1 className="text-3xl font-bold mb-6">Sign in</h1>
-          <form>
+          {errorMessage && (
+            <p className="text-center text-sm text-red-500 mb-4">
+              {errorMessage}
+            </p> // Display the error message
+          )}
+          {!hasError && location.state?.message && (
+            <p className="text-center text-sm text-green-500 mb-4">
+              {location.state.message}
+            </p> // Display the location.state message if no error
+          )}
+          <form onSubmit={handleSignInClick}>
             <div className="mb-4">
-              <InputField type="email" placeholder="email address" />
+              <InputField
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="mb-4">
-              <InputField type="password" placeholder="Password" />
+              <InputField
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
             <div className="flex justify-between items-center mb-4">
-              <Button text="Sign in" className="w-full" onClick={handleSignInClick} />
+              <Button text="Sign in" className="w-full" />
             </div>
             <div className="text-center mb-4">
               <a href="#" className="text-sm text-orange-500">
@@ -46,8 +91,12 @@ const LoginPage: React.FC = () => {
             </div>
             <div className="text-center mb-4">
               <p>
-                No Account?{' '}
-                <button type="button" onClick={handleSignUpClick} className="text-orange-500">
+                No Account?{" "}
+                <button
+                  type="button"
+                  onClick={handleSignUpClick}
+                  className="text-orange-500"
+                >
                   Sign up
                 </button>
               </p>
@@ -59,7 +108,11 @@ const LoginPage: React.FC = () => {
             <span className="border-t border-gray-300 flex-grow"></span>
           </div>
           <div className="flex justify-center">
-            <Button text="Sign in with Google" className="bg-orange-100 text-orange-500" onClick={handleGoogleSignInClick} />
+            <Button
+              text="Sign in with Google"
+              className="bg-orange-100 text-orange-500"
+              onClick={handleGoogleSignInClick}
+            />
           </div>
         </div>
       </div>

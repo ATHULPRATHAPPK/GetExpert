@@ -28,10 +28,7 @@ export const registerUser = async (userData: IUser) => {
     600,
     JSON.stringify(userDataWithOtp)
   );
-
   // Hash the password (This will be saved after OTP verification)
-  userData.password = await bcrypt.hash(userData.password, 10);
-
   return "OTP sent. Please verify to complete registration.";
 };
 
@@ -50,6 +47,7 @@ export const verifyUserOtp = async (email: string, otp: string) => {
   }
 
   // OTP is valid, save the user data to MongoDB
+  userData.password = await bcrypt.hash(userData.password, 10);
   const newUser = await createUser({
     email: userData.email,
     password: userData.password,
@@ -58,6 +56,28 @@ export const verifyUserOtp = async (email: string, otp: string) => {
 
   // Remove user data from Redis after successful verification
   await redisClient.del(`user:${email}`);
-
   return "User registered successfully";
+};
+
+
+
+//=========================================login service =================//
+
+export const loginUser = async (email: string, password: string) => {
+  try {
+    const existingUser = await findUserByEmail(email);
+    console.log("User found:", existingUser);
+    if (!existingUser) {
+      throw new Error("Invalid email or password.");
+    }
+    const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
+    console.log("Password match:", isPasswordCorrect);
+    if (!isPasswordCorrect) {
+      return { success: false, message: "Invalid password." };
+    }
+    return { success: true, message: "User logged in successfully." };
+  } catch (error) {
+    console.error("Error during login:", error);
+    throw new Error("An error occurred while logging in.");
+  }
 };

@@ -1,13 +1,16 @@
-// src/interface/pages/user/Register.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import Spinner from "../../components/Spinner";
+import { registerUser } from "../../../application/service/authService"; // Import the registration service
 import "../../styles/index.css";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -18,14 +21,15 @@ const RegisterPage: React.FC = () => {
       setPasswordError("Passwords do not match");
       return;
     }
-
     setLoading(true);
-    // Simulate a registration process
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setLoading(false);
-
-    console.log("Register clicked");
-    navigate("/otp-verification");
+    try {
+      const response = await registerUser({ email, password, username, mobileNumber });
+      setLoading(false);
+      navigate("/otp-verification", { state: { message: response, email } });
+    } catch (error) {
+      setLoading(false);
+      setPasswordError((error as Error).message);
+    }
   };
 
   const handleGoogleSignInClick = () => {
@@ -37,7 +41,7 @@ const RegisterPage: React.FC = () => {
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault();
     handleRegister();
   };
 
@@ -52,17 +56,26 @@ const RegisterPage: React.FC = () => {
           <h1 className="text-3xl font-bold mb-6">Sign Up</h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <InputField type="email" placeholder="email address" />
+              <InputField
+                type="email"
+                placeholder="email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="mb-4 flex space-x-2">
               <InputField
                 type="text"
                 placeholder="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-1/2"
               />
               <InputField
                 type="text"
                 placeholder="mobile number"
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
                 className="w-1/2"
               />
             </div>
