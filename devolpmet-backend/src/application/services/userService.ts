@@ -1,8 +1,17 @@
-import { createUser, findUserByEmail } from "../../domain/repositories/userRepo";
+import {
+  createUser,
+  findUserByEmail,
+} from "../../domain/repositories/userRepo";
 import { IUser } from "../../domain/entities/User";
+import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
+import Cookie from "cookies";
 import { redisClient } from "../../infrastructure/redis/redisClient";
 import { generateOTP, sendOTP } from "../../infrastructure/otp/otpService";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../infrastructure/security/tokens";
 
 export const registerUser = async (userData: IUser) => {
   // Check if user data is already in Redis
@@ -59,23 +68,47 @@ export const verifyUserOtp = async (email: string, otp: string) => {
   return "User registered successfully";
 };
 
-
-
 //=========================================login service =================//
 
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (
+  email: string,
+  password: string,
+  res: Response
+) => {
   try {
     const existingUser = await findUserByEmail(email);
-    console.log("User found:", existingUser);
     if (!existingUser) {
       throw new Error("Invalid email or password.");
     }
-    const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
-    console.log("Password match:", isPasswordCorrect);
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      existingUser.password
+    );
     if (!isPasswordCorrect) {
       return { success: false, message: "Invalid password." };
     }
-    return { success: true, message: "User logged in successfully." };
+    const accessToken = generateAccessToken(existingUser.id);
+    console.log(accessToken, "acceesssss");
+    const refreshToken = generateRefreshToken(existingUser.id);
+    console.log(refreshToken);
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: true,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: true,
+    });
+
+    return {
+      success: true,
+      message: "User logged in successfully.",
+      tokenSet: true,
+      userDetails: { name: existingUser.username, email: existingUser.email },
+    };
   } catch (error) {
     console.error("Error during login:", error);
     throw new Error("An error occurred while logging in.");

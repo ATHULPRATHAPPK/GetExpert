@@ -52,6 +52,7 @@ export const loginUser = async (email:string, password:string)=>{
     try{
         console.log("user login function caling...");
         const response = await api.post("/users/login",{email,password})
+
         return response.data
     }catch(error){
           console.log("login failed...");       

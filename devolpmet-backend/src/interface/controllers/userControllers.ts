@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
+import { verifyToken } from "../../infrastructure/http/middlewares/authMiddleware";
 import {
   registerUser,
   verifyUserOtp,
   loginUser
 } from "../../application/services/userService";
-import { log } from "console";
+
 
 
 //==================================user registration===================//
@@ -49,7 +50,7 @@ export const userLogin = async (req: Request, res: Response) => {
   console.log("Reached userLogin function.");
   const { email, password } = req.body;
   try {
-    const result = await loginUser(email, password);
+    const result = await loginUser(email, password,res);
     console.log("Login result:", result);
     if (result.success) {
       return res.status(200).json(result);
@@ -60,5 +61,34 @@ export const userLogin = async (req: Request, res: Response) => {
     console.error("Login error:", error);
     const errorMessage = (error as Error).message;
     return res.status(500).json({ success: false, message: errorMessage });
+  }
+};
+
+//=========================================user profile=================//
+export const userProfile = async (req: Request, res: Response) => {
+  const accessToken = req.cookies.accessToken;
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!accessToken && !refreshToken) {
+      return res.status(401).json({ success: false, message: 'No token provided' });
+  }
+
+  try {
+      const result = verifyToken(accessToken, refreshToken);
+      console.log(result, "result");
+
+      if (result.success) {
+          if (result.newAccessToken) {
+              // Set the new access token in the cookie
+              res.cookie('accessToken', result.newAccessToken, { httpOnly: true, secure: true });
+              return res.status(200).json({ success: true, message: 'TOKEN UPDATED SUCCESS' });
+          }
+          return res.status(200).json({ success: true, message: 'Valid access token' });
+      } else {
+          return res.status(401).json({ success: false, message: 'Invalid token' });
+      }
+  } catch (error) {
+      console.error('Error fetching user profile:', error);
+      return res.status(500).json({ success: false, message: 'Server error' });
   }
 };

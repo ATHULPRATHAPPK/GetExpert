@@ -22,6 +22,7 @@ const RegisterPage: React.FC = () => {
       return;
     }
     setLoading(true);
+
     try {
       const response = await registerUser({ email, password, username, mobileNumber });
       setLoading(false);

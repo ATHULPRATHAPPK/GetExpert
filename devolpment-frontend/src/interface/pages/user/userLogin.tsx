@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
-import { loginUser } from "../../../application/service/authService";
+import {loginUser} from "../../../application/service/authService";
+import {setUser } from "../../../state/user/userSlice";
 import "../../styles/index.css";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -24,16 +27,17 @@ const LoginPage: React.FC = () => {
     try {
       const response = await loginUser(email, password);
       console.log("response", response);
-      if (response) {
+      if (response.success)  {
+        dispatch(setUser(response.userDetails));
         navigate("/");
       } else {
         setErrorMessage("Invalid email or password.");
-        setHasError(true); // Set error flag
+        setHasError(true); 
       }
     } catch (error) {
       console.log(error);
       setErrorMessage("An unexpected error occurred. Please try again.");
-      setHasError(true); // Set error flag
+      setHasError(true);
     }
   };
 

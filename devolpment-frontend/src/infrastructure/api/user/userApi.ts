@@ -1,17 +1,16 @@
-// src/infrastructure/api/api.ts
+
 import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/api', 
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 api.interceptors.request.use(
   config => {
-    // Add authorization token if needed
     return config;
   },
   error => {
@@ -20,11 +19,17 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  response => response,
-  error => {
-    // Handle errors globally
-    return Promise.reject(error);
-  }
+    response => {
+        if (response.headers['set-cookie']) {
+          console.log('Cookies set:', response.headers['set-cookie']);
+        }
+        console.log("responce.header=>",response.headers);
+        
+        return response;
+      },
+      error => {
+        return Promise.reject(error);
+      }
 );
 
 export default api;
