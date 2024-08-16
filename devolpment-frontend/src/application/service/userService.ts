@@ -2,9 +2,13 @@
 
 import api from '../../infrastructure/api/user/userApi';
 
-export const fetchUserProfile = async () => {
+
+export const fetchUserProfile = async (email: string) => {
   try {
-    const response = await api.post('/users/profile');
+    if (!email) {
+      throw new Error('User email is not provided.');
+    }
+    const response = await api.post('/users/profile', { email });
     return response.data;
   } catch (error) {
     console.error('Error fetching user profile:', error);

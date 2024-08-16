@@ -26,9 +26,13 @@ const LoginPage: React.FC = () => {
   const handleLogin = async () => {
     try {
       const response = await loginUser(email, password);
-      console.log("response", response);
+      console.log("response", response.userDetails);
+      const userDetails = {
+        email: response.userDetails.email,
+        name: response.userDetails.userName,
+      };
       if (response.success)  {
-        dispatch(setUser(response.userDetails));
+        dispatch(setUser(userDetails));
         navigate("/");
       } else {
         setErrorMessage("Invalid email or password.");

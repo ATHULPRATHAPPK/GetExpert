@@ -15,22 +15,29 @@ const Navbar: React.FC = () => {
     navigate('/login'); 
   };
 
-  const handleProfileClick = async()=>{
-    try{
-      const response = await fetchUserProfile();
-      console.log(response,"responce");
-      
-      if(response.success){
-        console.log("reched suceess");
-        
-        navigate("/profile")
+  const handleProfileClick = async () => {
+    try {
+      if (user.email) {
+        const response = await fetchUserProfile(user.email);
+        console.log(response, "response");
+  
+        if (response.success) {
+          console.log("Reached success");
+          navigate("/profile");
+        } else {
+          console.log("Failed to fetch profile:", response.message);
+          // Handle failure case (e.g., show a message or perform other actions)
+        }
+      } else {
+        console.error("User email is not available.");
+        // Handle the case where email is null (e.g., redirect to login or show an error)
       }
-    }catch(err){
+    } catch (err) {
       console.log(err);
-      navigate("/login")
+      handleLogout();
     }
-  }
-
+  };
+  
   return (
     <nav className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-2 flex justify-between items-center">

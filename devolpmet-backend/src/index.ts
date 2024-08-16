@@ -1,38 +1,49 @@
 import express from 'express';
-import cors from "cors"
-import { envConfig } from '../src/config/envConfig';
-import { connectDB } from '../src/infrastructure/database/dbConfig';
-import userRoutes from '../src/infrastructure/http/routes/userRoutes';
-
+import cors from 'cors';
+import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-const morgan = require('morgan');
+import morgan from 'morgan';
+import { connectDB } from './infrastructure/database/dbConfig';
+import { PORT } from './infrastructure/constants/env';
+import userRoutes from './routes/userRoutes';
 
-const app = express();
+// Load environment variables
+dotenv.config();
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({extended:true}))
-app.use(morgan('dev'));
-app.use(cookieParser());
-// app.use(authMiddleware)
-// CORS configuration
-app.use(cors({
-  origin: 'http://localhost:5174', // Allow requests from this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-  credentials: true
-}));
+const startServer = async (): Promise<void> => {
+  try {
+    // Connect to the database
+    await connectDB();
 
-// Routes
-app.use('/api/users', userRoutes);
+    // Create an instance of Express
+    const app = express();
 
-const startServer = async () => {
-  await connectDB();
-  app.listen(envConfig.PORT, () => {
-    console.log(`Server running on port ${envConfig.PORT}`);
-  });
+    // Middleware
+    app.use(morgan('dev'));
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser());
+
+    // CORS configuration
+    app.use(cors({
+      origin: 'http://localhost:5173', // Allow requests from this origin
+      methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+      allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+      credentials: true,
+    }));
+
+    // Routes
+    app.use('/api/users', userRoutes);
+
+    // Start the server
+    app.listen(PORT, () => {
+      console.log(`Server active on port: ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error('Error starting the server:', error);
+  }
 };
 
+// Start the server
 startServer();
-
-
