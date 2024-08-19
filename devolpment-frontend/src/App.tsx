@@ -1,23 +1,22 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './interface/pages/user/Home';
-import LoginPage from './interface/pages/user/userLogin';
-import RegisterPage from './interface/pages/user/register';
-import OtpVerificationPage from './interface/pages/user/OtpVerify';
-import Profile from './interface/pages/user/profile';
-import { ProtectedRouter } from './interface/components/protectedRouter';
+import TechRoutes from './routes/technicianRoutes';
+import AdminRoutes from './routes/adminRoutes';
+import UserRoutes from './routes/userRoutes';
+
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/otp-verification" element={<OtpVerificationPage />} />
-        <Route element ={<ProtectedRouter/>}>
-        <Route path="/profile" element={<Profile/>} />
-        </Route>
+        {/* User Routes */}
+        <Route path="/*" element={<UserRoutes />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
+
+        {/* Technician Routes */}
+        <Route path="/technician/*" element={<TechRoutes />} />
       </Routes>
     </Router>
   );

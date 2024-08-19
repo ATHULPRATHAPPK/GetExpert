@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../state/store';
-import { updateUserProfile } from '../../../application/service/userService';
+import { updateUserProfile } from '../../../application/service/user/userService';
 import InputField from '../../components/InputField';
 import Button from '../../components/Button';
 

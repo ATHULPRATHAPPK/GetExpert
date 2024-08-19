@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../state/store';
 import { clearUser } from '../../state/user/userSlice'; 
-import { fetchUserProfile } from '../../application/service/userService';
+import { fetchUserProfile } from '../../application/service/user/userService';
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();

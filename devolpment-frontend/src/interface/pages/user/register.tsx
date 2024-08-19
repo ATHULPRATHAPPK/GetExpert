@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import Spinner from "../../components/Spinner";
-import { registerUser } from "../../../application/service/authService"; // Import the registration service
+import { registerUser } from "../../../application/service/user/authService"; // Import the registration service
 import "../../styles/index.css";
 
 const RegisterPage: React.FC = () => {

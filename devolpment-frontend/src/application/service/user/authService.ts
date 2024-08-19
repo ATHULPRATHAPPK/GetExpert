@@ -1,5 +1,5 @@
 import axios from "axios";
-import api from "../../infrastructure/api/user/userApi";
+import api from "../../../infrastructure/api/user/userApi";
 
 
 //=========================================user register =================//

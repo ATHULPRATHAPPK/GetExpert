@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { connectDB } from './infrastructure/database/dbConfig';
 import { PORT } from './infrastructure/constants/env';
 import userRoutes from './routes/userRoutes';
+import adminRouter from './routes/adminRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -34,6 +35,7 @@ const startServer = async (): Promise<void> => {
 
     // Routes
     app.use('/api/users', userRoutes);
+    app.use('/api/admin',adminRouter)
 
     // Start the server
     app.listen(PORT, () => {

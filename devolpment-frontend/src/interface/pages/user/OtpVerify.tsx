@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../../components/Button";
 import OtpInput from "../../components/OtpInput";
 import Spinner from "../../components/Spinner";
-import { verifyOtp } from "../../../application/service/authService";
+import { verifyOtp } from "../../../application/service/user/authService";
 
 const OtpVerificationPage: React.FC = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);

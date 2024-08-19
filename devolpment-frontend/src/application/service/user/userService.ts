@@ -1,6 +1,6 @@
 // src/application/services/userService.ts
 
-import api from '../../infrastructure/api/user/userApi';
+import api from "../../../infrastructure/api/user/userApi";
 
 
 export const fetchUserProfile = async (email: string) => {

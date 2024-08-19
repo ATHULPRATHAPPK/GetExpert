@@ -22,9 +22,7 @@ api.interceptors.response.use(
     response => {
         if (response.headers['set-cookie']) {
           console.log('Cookies set:', response.headers['set-cookie']);
-        }
-        console.log("responce.header=>",response.headers);
-        
+        }   
         return response;
       },
       error => {

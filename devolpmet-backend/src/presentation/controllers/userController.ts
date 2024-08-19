@@ -36,6 +36,7 @@ export class UserController   {
   }
 //=========================================user login=================//
 async userLogin(req: Request, res: Response, next: NextFunction) {
+ console.log("user login...");
  
   const { email, password } = req.body;
   try {

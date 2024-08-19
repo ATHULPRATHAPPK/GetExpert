@@ -6,7 +6,7 @@ import { User } from "../../domain/entities/userSchema"; // Import correct User 
 import { redisClient } from "../../infrastructure/security/redis/redisClient";
 import { generateOTP } from "../../infrastructure/security/otp/otpService";
 import { IUserInteractor } from "../../interface/userInterface/IUserInteractor";
-import { generateAccessToken, generateRefreshToken } from "../../infrastructure/security/tokens/tokens";
+
 
 
 export class UserInteractor implements IUserInteractor  {
@@ -125,16 +125,14 @@ export class UserInteractor implements IUserInteractor  {
 
       const comparePassword = await this.hashPassword.comparePassword(password,userData.password)
       console.log(comparePassword,"comparePassword");
-      if(!comparePassword){
-        return { success: false, message: "Invalid password." };
-      }   
+     
       
-      const accessToken = this.jwt.generateToken({ id: userData.id }, '1h'); 
+   const accessToken = this.jwt.generateToken({ id: userData.id }, '1h'); 
       const refreshToken = this.jwt.generateToken({ id: userData.id }, '30d'); 
   
       
       console.log(" accessToken", accessToken);
-      console.log(" refreshToken", refreshToken);
+      console.log(" refreshToken", refreshToken);   
 
       return {
         success :true,
