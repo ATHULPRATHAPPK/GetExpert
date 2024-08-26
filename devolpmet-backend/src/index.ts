@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
@@ -7,16 +7,14 @@ import { connectDB } from './infrastructure/database/dbConfig';
 import { PORT } from './infrastructure/constants/env';
 import userRoutes from './routes/userRoutes';
 import adminRouter from './routes/adminRoutes';
+import techRouter from './routes/techRoutes'
 
 // Load environment variables
 dotenv.config();
 
 const startServer = async (): Promise<void> => {
   try {
-    // Connect to the database
     await connectDB();
-
-    // Create an instance of Express
     const app = express();
 
     // Middleware
@@ -27,17 +25,28 @@ const startServer = async (): Promise<void> => {
 
     // CORS configuration
     app.use(cors({
-      origin: 'http://localhost:5173', // Allow requests from this origin
-      methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-      allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+      origin: 'http://localhost:5173', 
+      methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+      allowedHeaders: ['Content-Type', 'Authorization'], 
       credentials: true,
     }));
 
     // Routes
     app.use('/api/users', userRoutes);
     app.use('/api/admin',adminRouter)
+    app.use('/api/tech',techRouter)
 
-    // Start the server
+
+    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+      console.error('Error:', err.message);
+      res.status(500).json({
+        success: false,
+        message: 'Internal Server Error', 
+        error: err.message, 
+      });
+    });
+
+
     app.listen(PORT, () => {
       console.log(`Server active on port: ${PORT}`);
     });

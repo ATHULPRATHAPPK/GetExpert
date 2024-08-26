@@ -1,34 +1,30 @@
 import { IUserRepo } from "../../interface/userInterface/IUserRepo";
 import { jwtInterface } from "../../interface/serviceInterface/jwtInterface";
 import { bcryptInterface } from "../../interface/serviceInterface/bcryptInterface";
-import { IMailer } from "../../interface/serviceInterface/mailerInterface"; 
+import { IMailer } from "../../interface/serviceInterface/mailerInterface";
 import { User } from "../../domain/entities/userSchema"; // Import correct User schema/entity
 import { redisClient } from "../../infrastructure/security/redis/redisClient";
 import { generateOTP } from "../../infrastructure/security/otp/otpService";
 import { IUserInteractor } from "../../interface/userInterface/IUserInteractor";
+import {UpdateProfileResult} from "../../domain/entities/User"
 
-
-
-export class UserInteractor implements IUserInteractor  {
+export class UserInteractor implements IUserInteractor {
   private repository: IUserRepo;
   private hashPassword: bcryptInterface;
   private jwt: jwtInterface;
-  private sendEmail : IMailer
- 
+  private sendEmail: IMailer;
+
   constructor(
     repository: IUserRepo,
     hashPassword: bcryptInterface,
     jwt: jwtInterface,
-    sendEmail : IMailer
-    
+    sendEmail: IMailer
   ) {
     this.repository = repository;
     this.hashPassword = hashPassword;
     this.jwt = jwt;
-    this.sendEmail =sendEmail
+    this.sendEmail = sendEmail;
   }
-
-
 
   async registerUser(data: User): Promise<any> {
     try {
@@ -41,15 +37,15 @@ export class UserInteractor implements IUserInteractor  {
 
       console.log("Registration process started...");
       const existingUser = await this.repository.findUser(data.email);
-      
+
       if (existingUser) {
         throw new Error("User already exists");
       }
       const otp = generateOTP();
-      console.log(otp ,'otp generated');
-      
-      await this.sendEmail.sendEmail(data.email,"otp",otp)
-      
+      console.log(otp, "otp generated");
+
+      await this.sendEmail.sendEmail(data.email, "otp", otp);
+
       const userDataWithOtp = { ...data, otp };
       const result = await redisClient.setEx(
         `user:${data.email}`,
@@ -58,32 +54,27 @@ export class UserInteractor implements IUserInteractor  {
       );
       console.log("Redis set result:", result);
 
-      return "User registered successfully"
+      return "User registered successfully";
     } catch (error) {
       console.error("Error during user registration:", error);
       throw error;
     }
   }
 
-
-
-
-
-
   async verifyOTP(email: string, otp: string): Promise<any> {
     try {
-      console.log("working otp");  
+      console.log("working otp");
       console.log(otp);
-      console.log(email);    
+      console.log(email);
       const keyExists = await redisClient.exists(`user:${email}`);
       console.log("Key existence check:", keyExists);
       if (keyExists === 0) {
         throw new Error("OTP expired or user not found");
       }
-  
+
       const cachedUserData = await redisClient.get(`user:${email}`);
       console.log("Redis data:", cachedUserData);
- 
+
       if (!cachedUserData) {
         throw new Error("OTP expired or user not found");
       }
@@ -94,56 +85,59 @@ export class UserInteractor implements IUserInteractor  {
         throw new Error("Invalid OTP");
       }
 
-      const hashPassword = await this.hashPassword.encryptPassword(userData.password as string);
-      console.log("hashPassword",hashPassword);
-      
+      const hashPassword = await this.hashPassword.encryptPassword(
+        userData.password as string
+      );
+      console.log("hashPassword", hashPassword);
+
       const newUser = User.newUser(
         userData.username,
         userData.email,
         hashPassword,
         false,
-        true      
-      )
-      
-      const register = await this.repository.registerUser(newUser)
-      console.log("register",register);
+        true
+      );
+
+      const register = await this.repository.registerUser(newUser);
+      console.log("register", register);
       return "OTP verified successfully. Proceeding with registration.";
     } catch (error) {
       console.error("Error during OTP verification:", error);
-      throw error;  // Re-throw the error to be handled by the calling function or middleware
+      throw error; // Re-throw the error to be handled by the calling function or middleware
     }
   }
- 
 
   async login(email: string, password: string): Promise<any> {
-    console.log("actualy working this code...");  
+    console.log("actualy working this code...");
     try {
-      const userData = await this.repository.findUser(email)
-      console.log(userData,"userhscvs");
-      console.log(password,"password");
-      
+      const userData = await this.repository.findUser(email);
+      const comparePassword = await this.hashPassword.comparePassword(
+        password,
+        userData.password
+      );
 
-      const comparePassword = await this.hashPassword.comparePassword(password,userData.password)
-      console.log(comparePassword,"comparePassword");
-     
-      
-   const accessToken = this.jwt.generateToken({ id: userData.id }, '1h'); 
-      const refreshToken = this.jwt.generateToken({ id: userData.id }, '30d'); 
-  
-      
+      if (!comparePassword) {
+        return {
+          success: false,
+          message: "User logged in failed.",
+        };
+      }
+
+      const accessToken = this.jwt.generateToken({ id: userData.id }, "1h");
+      const refreshToken = this.jwt.generateToken({ id: userData.id }, "30d");
+
       console.log(" accessToken", accessToken);
-      console.log(" refreshToken", refreshToken);   
+      console.log(" refreshToken", refreshToken);
 
       return {
-        success :true,
+        success: true,
         message: "User logged in successfully.",
         tokens: { accessToken, refreshToken },
         userDetails: {
           userName: userData.userName,
           email: userData.email,
         },
-      }
-    
+      };
     } catch (error) {
       console.error("Error during login:", error);
       throw new Error("An error occurred while logging in.");
@@ -151,27 +145,65 @@ export class UserInteractor implements IUserInteractor  {
   }
 
 
-
   async userProfile(email: string): Promise<any> {
     try {
       console.log("Reached interactor...");
-      const userData = await this.repository.findUser(email)
+      const userData = await this.repository.findUser(email);
       return {
-        success :true,
+        success: true,
         message: "User exist.",
         userDetails: {
           userName: userData.userName,
           email: userData.email,
         },
-      }
-        
+      };
     } catch (error) {
       console.error("Error during user profile retrieval:", error);
       return {
         success: false,
-        message: "An error occurred while retrieving the user profile."
+        message: "An error occurred while retrieving the user profile.",
       };
     }
   }
+
+
+async updateProfile(data: User): Promise<UpdateProfileResult> {
+    console.log("reached profile",data);
+    try {
+        const existingUser = await this.repository.findUser(data.email);
+        console.log(existingUser);
+
+        if (!existingUser) {
+            return {
+                success: false,
+                message: "User not found."
+            };
+        }
+
+        // Update the existing user's details
+        if (data.name) existingUser.userName = data.name;
+        if (data.phoneNumber) existingUser.phone = data.phoneNumber;
+        if (data.gender) existingUser.gender = data.gender;
+        if (data.profilePhotoUrl) existingUser.profilePhotoUrl = data.profilePhotoUrl;
+        if (data.address) existingUser.address = data.address;
+
+        // Save the updated user document
+        await this.repository.updateUser(existingUser);
+
+        return {
+            success: true,
+            message: "Profile updated successfully.",
+            updatedUser: existingUser
+        };
+    } catch (error) {
+        console.error("Error during user profile update:", error);
+        return {
+            success: false,
+            message: "An error occurred while updating the user profile."
+        };
+    }
+}
+
+
 
 }

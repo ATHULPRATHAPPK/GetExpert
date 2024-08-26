@@ -28,12 +28,14 @@ const userController = new UserController(userInteractor);
 const userAuthIntractor = new UserAuthIntractor(jwtTokens, userRepo);
 const userAuth = new userAuthMiddleware(userAuthIntractor,jwtTokens);
 
-// Routes with Authentication Middleware
+// Routes 
 router.post('/register', userController.register.bind(userController));
 router.post('/otp-verify', userController.verifyOtp.bind(userController));
 router.post('/login', userController.userLogin.bind(userController));
 
-// Apply `userAuth.authenticateUser` middleware before accessing the `/profile` route
+
+// Apply auth
 router.post('/profile', userAuth.authenticateUser.bind(userAuth), userController.userProfile.bind(userController));
+router.put('/update-profile',userController.updateProfile.bind(userController))
 
 export default router;

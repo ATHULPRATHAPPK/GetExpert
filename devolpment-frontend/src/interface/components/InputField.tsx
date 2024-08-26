@@ -4,6 +4,7 @@ interface InputFieldProps {
   type: string;
   placeholder: string;
   value?: string;
+  name?:string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
 }

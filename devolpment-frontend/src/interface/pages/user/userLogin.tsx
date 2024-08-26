@@ -5,6 +5,7 @@ import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import {loginUser} from "../../../application/service/user/authService";
 import {setUser } from "../../../state/user/userSlice";
+import Spinner from "../../components/Spinner";
 import "../../styles/index.css";
 
 const LoginPage: React.FC = () => {
@@ -14,14 +15,17 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [hasError, setHasError] = useState(false); // State to track if an error occurred
+  const [hasError, setHasError] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   const handleSignInClick = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     console.log("Sign in clicked");
     console.log(email);
     handleLogin();
   };
+
 
   const handleLogin = async () => {
     try {
@@ -31,6 +35,7 @@ const LoginPage: React.FC = () => {
         email: response.userDetails.email,
         name: response.userDetails.userName,
       };
+      setLoading(false);
       if (response.success)  {
         dispatch(setUser(userDetails));
         navigate("/");
@@ -39,8 +44,9 @@ const LoginPage: React.FC = () => {
         setHasError(true); 
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
-      setErrorMessage("An unexpected error occurred. Please try again.");
+      setErrorMessage("Invalid email or password.");
       setHasError(true);
     }
   };
@@ -55,7 +61,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="relative flex flex-col lg:flex-row h-screen bg-gray-50">
-      <div className="hidden lg:flex flex-col items-center justify-center lg:w-1/2 w-full bg-orange-100">
+      <div className="hidden lg:flex flex-col items-center justify-center lg:w-1/2 w-full bg-orange-400">
         <img src="path_to_your_image" alt="GetExpert" className="w-1/2 mb-8" />
       </div>
       <div className="absolute inset-0 flex items-center justify-center">
@@ -109,6 +115,7 @@ const LoginPage: React.FC = () => {
                 </button>
               </p>
             </div>
+            {loading && <Spinner />}
           </form>
           <div className="flex items-center justify-center my-4">
             <span className="border-t border-gray-300 flex-grow"></span>

@@ -85,5 +85,24 @@ async userLogin(req: Request, res: Response, next: NextFunction) {
     }
   }
 
+  //=========================================update profile=================//
+  async updateProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log("result",req.body);
+        const result = await this.userInteractor.updateProfile(req.body);
+        // console.log("result",result);
+        
+        if (result.success) {
+            return res.status(200).json(result);
+        } else {
+            return res.status(401).json(result);
+        }
+    } catch (error) {
+        console.error("Error during reaching userprofile", error);
+        next(error);
+    }
+}
+
+
   
 }

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../../components/Button";
 import OtpInput from "../../components/OtpInput";
 import Spinner from "../../components/Spinner";
-import { verifyOtp } from "../../../application/service/user/authService";
+import { verifyOtp } from "../../../application/service/technician/authService";
 
 const OtpVerificationPage: React.FC = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -30,7 +30,7 @@ const OtpVerificationPage: React.FC = () => {
   const handleVerifyClick = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const enteredOtp = otp.join("");
-    const email = location.state?.email;
+    const email = location.state?.email ;
 
     if (enteredOtp.length === 4 && email) {
       setIsLoading(true);
@@ -49,11 +49,11 @@ const OtpVerificationPage: React.FC = () => {
           if (remainingTime > 0) {
             setTimeout(() => {
               setIsLoading(false);
-              navigate("/login",{state :{message:response}});
+              navigate("/technician/login",{state :{message:response}});
             }, remainingTime);
           } else {
             setIsLoading(false);
-            navigate("/login",{state :{message:response}});
+            navigate("/technician/login",{state :{message:response}});
           }
         }, delay);
       } catch (error) {

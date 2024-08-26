@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
-
 import "../../styles/index.css";
 import { loginAdmin } from "../../../application/service/admin/authService";
+import { setAdmin } from "../../../state/admin/adminSlice";
 
 const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -23,18 +25,17 @@ const AdminLoginPage: React.FC = () => {
       const response = await loginAdmin(email, password);
       const adminDetails = {
         email: response.data.email,
-       
       };
-      console.log(response,"respo.........." ,adminDetails);
       
       if (response.success) {
+        dispatch(setAdmin(adminDetails));  // Store the admin email in the Redux store
         navigate("/admin/dash-board");
       } else {
         setErrorMessage("Invalid email or password.");
       }
     } catch (err) {
       console.error(err);
-      setErrorMessage("An error occurred. Please try again.");
+      setErrorMessage("Invalid email or password. Please try again.");
     }
   };
 
@@ -74,7 +75,7 @@ const AdminLoginPage: React.FC = () => {
               />
             </div>
             <div className="flex justify-between items-center mb-4">
-              <Button text="Sign In" className="w-full bg-gray-800 text-white hover:bg-gray-700" />
+              <Button text="Sign In" className="w-full text-white bg-gray-700 hover:bg-gray-500" />
             </div>
           </form>
         </div>

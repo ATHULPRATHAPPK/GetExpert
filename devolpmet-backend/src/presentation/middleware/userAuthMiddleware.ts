@@ -16,6 +16,8 @@ export class userAuthMiddleware {
   }
 
   async authenticateUser(req: Request, res: Response, next: NextFunction) {
+    console.log("hello..");
+    
     try {
       const { accessToken, refreshToken } = req.cookies;
       console.log(accessToken, refreshToken, "accessTokenaccessToken");

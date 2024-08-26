@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import Spinner from "../../components/Spinner";
-import { registerUser } from "../../../application/service/user/authService"; // Import the registration service
+
+import { registerTech } from "../../../application/service/technician/authService";
 import "../../styles/index.css";
 
 const RegisterPage: React.FC = () => {
@@ -24,9 +25,9 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await registerUser({ email, password, username, mobileNumber });
+      const response = await registerTech({ email, password, username, mobileNumber });
       setLoading(false);
-      navigate("/otp-verification", { state: { message: response, email } });
+      navigate("/technician/otp-verification", { state: { message: response, email } });
     } catch (error) {
       setLoading(false);
       setPasswordError((error as Error).message);
@@ -34,11 +35,11 @@ const RegisterPage: React.FC = () => {
   };
 
   const handleGoogleSignInClick = () => {
-    navigate("/login");
+    // navigate("/login");
   };
 
   const handleSignInClick = () => {
-    navigate("/login");
+    navigate("/technician/login");
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,13 +49,13 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="relative flex flex-col lg:flex-row h-screen bg-gray-50">
-      <div className="hidden lg:flex flex-col items-center justify-center lg:w-1/2 w-full bg-orange-400">
-        <img src="path_to_your_image" alt="GetExpert" className="w-1/2 mb-8" />
+      <div className="hidden lg:flex flex-col items-center justify-center lg:w-1/2 w-full bg-blue-100">
+    
       </div>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="bg-white p-8 rounded-3xl shadow-md w-11/12 lg:w-[28rem]">
           <h2 className="text-2xl font-semibold mb-4">Register here</h2>
-          <h1 className="text-3xl font-bold mb-6">Sign Up</h1>
+
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <InputField
@@ -100,7 +101,7 @@ const RegisterPage: React.FC = () => {
               <div className="mb-4 text-red-500 text-sm">{passwordError}</div>
             )}
             <div className="flex justify-between items-center mb-4">
-              <Button text="Register" className="w-full" />
+              <Button text="Register" className="w-full bg-blue-400 hover:bg-blue-500" />
             </div>
             <div className="text-center mb-4">
               <a href="#" className="text-sm text-orange-500">
@@ -129,7 +130,7 @@ const RegisterPage: React.FC = () => {
           <div className="flex justify-center">
             <Button
               text="Sign up with Google"
-              className="bg-orange-100 text-orange-500"
+              className=" bg-blue-400 hover:bg-blue-500"
               onClick={handleGoogleSignInClick}
             />
           </div>

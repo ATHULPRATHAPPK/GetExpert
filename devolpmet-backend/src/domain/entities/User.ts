@@ -11,3 +11,10 @@ export interface LoginResult {
       refreshToken: string;
   };
 }
+
+
+export interface UpdateProfileResult {
+  success: boolean;
+  message: string;
+  updatedUser?: any; 
+}

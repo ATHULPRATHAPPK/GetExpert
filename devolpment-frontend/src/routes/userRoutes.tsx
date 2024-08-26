@@ -15,7 +15,7 @@ const UserRoutes: React.FC = () => {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/otp-verification" element={<OtpVerificationPage />} />
       <Route element={<ProtectedRouter />}>
-        <Route path="/profile" element={<Profile />} />
+      <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );

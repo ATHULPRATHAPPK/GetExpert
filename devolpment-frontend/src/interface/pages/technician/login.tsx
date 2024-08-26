@@ -4,6 +4,7 @@ import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import "../../styles/index.css";
 
+import { loginTech } from "../../../application/service/technician/authService";
 const TechnicianLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,6 +12,7 @@ const TechnicianLoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
+
 
   const handleSignInClick = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,14 +22,14 @@ const TechnicianLoginPage: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      // Replace with actual login logic
-      // Example: const response = await technicianLogin(email, password);
-      // if (response.success) {
-      //   navigate("/technician/dashboard");
-      // } else {
-      //   setErrorMessage("Invalid email or password.");
-      //   setHasError(true);
-      // }
+      const response = await loginTech(email, password);
+     
+      if (response.success) {
+        navigate("/technician/dash-board");
+      } else {
+        setErrorMessage("Invalid email or password.");
+      }
+     
     } catch (error) {
       console.log(error);
       setErrorMessage("An unexpected error occurred. Please try again.");
@@ -40,13 +42,13 @@ const TechnicianLoginPage: React.FC = () => {
   };
 
   const handleSignUpClick = () => {
-    navigate("/technician/register"); // Adjust navigation if necessary
+    navigate("/technician/register"); 
   };
 
   return (
     <div className="relative flex flex-col lg:flex-row h-screen bg-gray-50">
       <div className="hidden lg:flex flex-col items-center justify-center lg:w-1/2 w-full bg-blue-100">
-        <img src="path_to_your_image" alt="Technician" className="w-1/2 mb-8" />
+     
       </div>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="bg-white p-8 rounded-3xl shadow-md w-11/12 lg:w-[28rem]">
@@ -80,7 +82,7 @@ const TechnicianLoginPage: React.FC = () => {
               />
             </div>
             <div className="flex justify-between items-center mb-4">
-              <Button text="Sign In" className="w-full bg-blue-800 text-white hover:bg-blue-700" />
+              <Button text="Sign In" className="w-full bg-blue-400 hover:bg-orange-400" />
             </div>
             <div className="text-center mb-4">
               <a href="#" className="text-sm text-blue-500">
@@ -108,7 +110,7 @@ const TechnicianLoginPage: React.FC = () => {
           <div className="flex justify-center">
             <Button
               text="Sign in with Google"
-              className="bg-blue-100 text-blue-500"
+              className=" text-blue-500  hover:bg-orange-400"
               onClick={handleGoogleSignInClick}
             />
           </div>
