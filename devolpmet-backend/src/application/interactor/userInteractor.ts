@@ -103,7 +103,7 @@ export class UserInteractor implements IUserInteractor {
       return "OTP verified successfully. Proceeding with registration.";
     } catch (error) {
       console.error("Error during OTP verification:", error);
-      throw error; // Re-throw the error to be handled by the calling function or middleware
+      throw error; 
     }
   }
 
@@ -136,6 +136,8 @@ export class UserInteractor implements IUserInteractor {
         userDetails: {
           userName: userData.userName,
           email: userData.email,
+          phone:userData.phoneNumber,
+          address:userData.address
         },
       };
     } catch (error) {

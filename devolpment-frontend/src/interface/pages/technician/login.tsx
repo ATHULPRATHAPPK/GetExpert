@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import "../../styles/index.css";
 
 import { loginTech } from "../../../application/service/technician/authService";
+import { setTechnician } from "../../../state/technician/technicianSlice"; // Import the setTechnician action
+
+
 const TechnicianLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
-
 
   const handleSignInClick = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,33 +27,45 @@ const TechnicianLoginPage: React.FC = () => {
   const handleLogin = async () => {
     try {
       const response = await loginTech(email, password);
-     
-      if (response.success) {
-        navigate("/technician/dash-board");
+      console.log("Response:", response); 
+  
+      // Check if response and response.userDetails exist
+      if (response && response.userDetails) {
+        const technicianDetails = {
+          email: response.userDetails.email,
+          name: response.userDetails.name || "Unknown", 
+         
+        };
+  
+        if (response.success) {
+          dispatch(setTechnician(technicianDetails)); 
+          
+          navigate("/technician/dash-board");
+        } else {
+          setErrorMessage("Invalid email or password.");
+        }
       } else {
-        setErrorMessage("Invalid email or password.");
+        setErrorMessage("Login failed. Please try again.");
       }
-     
     } catch (error) {
-      console.log(error);
+      console.error("Error during login:", error);
       setErrorMessage("An unexpected error occurred. Please try again.");
       setHasError(true);
     }
   };
+  
 
   const handleGoogleSignInClick = () => {
     console.log("Google Sign in clicked");
   };
 
   const handleSignUpClick = () => {
-    navigate("/technician/register"); 
+    navigate("/technician/register");
   };
 
   return (
     <div className="relative flex flex-col lg:flex-row h-screen bg-gray-50">
-      <div className="hidden lg:flex flex-col items-center justify-center lg:w-1/2 w-full bg-blue-100">
-     
-      </div>
+      <div className="hidden lg:flex flex-col items-center justify-center lg:w-1/2 w-full bg-blue-100"></div>
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="bg-white p-8 rounded-3xl shadow-md w-11/12 lg:w-[28rem]">
           <h2 className="text-2xl font-semibold mb-4">Welcome to GetExpert</h2>
@@ -110,7 +126,7 @@ const TechnicianLoginPage: React.FC = () => {
           <div className="flex justify-center">
             <Button
               text="Sign in with Google"
-              className=" text-blue-500  hover:bg-orange-400"
+              className="text-blue-500 hover:bg-orange-400"
               onClick={handleGoogleSignInClick}
             />
           </div>

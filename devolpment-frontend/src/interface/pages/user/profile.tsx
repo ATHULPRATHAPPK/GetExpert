@@ -25,22 +25,17 @@ const ProfilePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'bookings' | 'security' | 'wallet'>('bookings');
   const [showAddDetails, setShowAddDetails] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.user);
+
+  // Initialize formData with user data
   const [formData, setFormData] = useState<FormData>({
-    email: user.email,
-    phone: '',
-    gender: '',
-    profilePhotoUrl: '',
-    address: [{ buildingNumber: '', city: '', pincode: '', state: '' }]
+    email: user.email || '',
+    phone: user.phone || '',
+    gender: user.gender || '',
+    profilePhotoUrl: user.profilePhotoUrl || '',
+    address: user.address && user.address.length > 0 
+      ? user.address 
+      : [{ buildingNumber: '', city: '', pincode: '', state: '' }]
   });
-
-  const profilePhoto = "https://via.placeholder.com/150";
-  const name = "Jane Doe";
-  const jobTitle = "User";
-  const location = "San Francisco, USA";
-  const contactEmail = "jane.doe@example.com";
-  const contactPhone = "+1 234 567 8901";
-  const walletBalance = "$300.00";
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -83,25 +78,37 @@ const ProfilePage: React.FC = () => {
         <div className="p-6 bg-orange-50">
           <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6">
             <img
-              src={profilePhoto}
+              src={formData.profilePhotoUrl || "https://via.placeholder.com/150"}
               alt="Profile"
               className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-md"
             />
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900">{name}</h1>
-              <p className="text-sm md:text-base text-gray-600">{jobTitle}</p>
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900">{user.name || "No Name Available"}</h1>
+              <p className="text-sm md:text-base text-gray-600">User</p>
               <div className="flex items-center space-x-2 md:space-x-4 mt-2">
-                <FaMapMarkerAlt className="text-lg md:text-xl text-gray-700" />
-                <span className="text-sm md:text-base text-gray-700">{location}</span>
+                <div className="mt-2">
+                  {user.address && user.address.length > 0 ? (
+                    user.address.map((addr, index) => (
+                      <div key={index} className="flex items-center space-x-2 md:space-x-4 mt-2">
+                        <FaMapMarkerAlt className="text-lg md:text-xl text-gray-700" />
+                        <span className="text-sm md:text-base text-gray-700">
+                          {`${addr.buildingNumber}, ${addr.city}, ${addr.state}, ${addr.pincode}`}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm md:text-base text-gray-600">No address available</p>
+                  )}
+                </div>
               </div>
               <div className="mt-4">
                 <p className="flex items-center text-sm md:text-base text-gray-600">
                   <FaEnvelope className="mr-1 md:mr-2 text-lg md:text-xl" />
-                  {contactEmail}
+                  {formData.email || "No Email Available"}
                 </p>
                 <p className="flex items-center text-sm md:text-base text-gray-600 mt-2">
                   <FaPhone className="mr-1 md:mr-2 text-lg md:text-xl" />
-                  {contactPhone}
+                  {formData.phone || "No Phone Number Available"}
                 </p>
               </div>
               <Button
@@ -115,8 +122,6 @@ const ProfilePage: React.FC = () => {
 
         {/* Navigation and Content Sections */}
         <div className="mt-6 px-6">
-         
-
           <div className="p-6 bg-white rounded-lg shadow">
             {showAddDetails && (
               <div className="space-y-4 mb-6">
@@ -138,7 +143,6 @@ const ProfilePage: React.FC = () => {
                     placeholder="Gender"
                     className="w-full p-2 border rounded-lg text-sm md:text-base"
                   />
-                 
                 </div>
 
                 {formData.address.map((addr, index) => (
@@ -193,9 +197,8 @@ const ProfilePage: React.FC = () => {
                 />
               </div>
             )}
-
-         
           </div>
+
           <div className="relative flex flex-wrap justify-around bg-orange-200 p-2 md:p-4 mb-6 rounded-lg shadow">
             {['bookings', 'security', 'wallet'].map((tab) => (
               <div
@@ -209,33 +212,18 @@ const ProfilePage: React.FC = () => {
                   {tab === 'bookings' && <FaListAlt className="mr-1 md:mr-2 text-lg md:text-xl" />}
                   {tab === 'security' && <FaShieldAlt className="mr-1 md:mr-2 text-lg md:text-xl" />}
                   {tab === 'wallet' && <FaWallet className="mr-1 md:mr-2 text-lg md:text-xl" />}
-                  {tab === 'bookings' && 'My Bookings'}
-                  {tab === 'security' && 'Security'}
-                  {tab === 'wallet' && 'Wallet'}
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </div>
-                <div
-                  className={`absolute bottom-0 left-0 h-1 bg-orange-500 transition-transform duration-300 ${activeTab === tab ? 'w-full' : 'w-0'} origin-left`}
-                />
+                {activeTab === tab && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-900 rounded-t-md"></div>
+                )}
               </div>
             ))}
-            
           </div>
-          {activeTab === 'bookings' && (
-              <div className="text-gray-600">Booking details here</div>
-            )}
-            {activeTab === 'security' && (
-              <div className="text-gray-600">Security settings here</div>
-            )}
-            {activeTab === 'wallet' && (
-              <div className="text-gray-600">Wallet balance: {walletBalance}</div>
-            )}
         </div>
-        
       </div>
-      
     </div>
   );
 };
 
 export default ProfilePage;
- 

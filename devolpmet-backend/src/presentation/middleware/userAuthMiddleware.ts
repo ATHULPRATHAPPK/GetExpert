@@ -7,7 +7,7 @@ interface authReqInput {
   refreshToken: string;
 }
 
-export class userAuthMiddleware {
+export class  userAuthMiddleware {
   private authInteractor: IAuthMiddlewareInteractor;
   private jwt: jwtInterface;
   constructor(interactor: IAuthMiddlewareInteractor, jwt: jwtInterface) {

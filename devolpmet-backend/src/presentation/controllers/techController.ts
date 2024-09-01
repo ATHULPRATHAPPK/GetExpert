@@ -1,5 +1,6 @@
 import {Request,Response,NextFunction} from "express"
 import { ITechInteractor } from "../../interface/techInterface/ITechInteractor"
+import { TechIntractor } from "../../application/interactor/techInteractor";
 
 
 
@@ -64,6 +65,48 @@ export class TechConteoller{
 }
   }
   
+
+
+  async  documentSubmit (req: Request, res: Response, next: NextFunction) {
+    try {
+
+      const updateResult  =  await this.techInteractor.documentUpdate(req.body,req.files)
+      console.log(updateResult);
+
+      if(updateResult){
+        const updated :boolean= true
+        return res.status(200).json(updated);
+      }else{
+        const updated :boolean= false
+        return res.status(401).json(updated);
+      }
+      
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      next(error);
+    }
+  };
   
+ async techDetails(req:Request,res:Response,next:NextFunction){
+  try{
+    const techDataParams = req.query;
+   console.log(techDataParams);
+   
+    const techData = await this.techInteractor.techData(techDataParams)
+    console.log("tech conteoller",techData);
+    
+    if(techData){
+     
+      return res.status(200).json({success:true,techData});
+    }else{
+      
+      return res.status(401).json({success:false});
+    }
+    
+  }catch(error){
+    console.log(error);
+    next(error);
+  }
+ }
 
 }

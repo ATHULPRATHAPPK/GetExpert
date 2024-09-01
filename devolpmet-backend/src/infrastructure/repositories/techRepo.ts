@@ -26,6 +26,11 @@ export class TechRepo implements ITechRepo{
         throw error;
       }
     }
+
+    async updateTech(id: string, updateData: any): Promise<any> {
+      return techModel.findByIdAndUpdate(id, updateData, { new: true });
+    }
+    
       
   }
 

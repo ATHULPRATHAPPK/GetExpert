@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const adminApi = axios.create({
+const techApi = axios.create({
   baseURL: 'http://localhost:3000/api/tech', 
   headers: {
     'Content-Type': 'application/json',
@@ -8,7 +8,7 @@ const adminApi = axios.create({
   withCredentials: true,
 });
 
-adminApi.interceptors.request.use(
+techApi.interceptors.request.use(
   config => {
     return config;
   },
@@ -17,7 +17,7 @@ adminApi.interceptors.request.use(
   }
 );
 
-adminApi.interceptors.response.use(
+techApi.interceptors.response.use(
   response => {
     if (response.headers['set-cookie']) {
       console.log('technician Cookies set:', response.headers['set-cookie']);
@@ -29,4 +29,4 @@ adminApi.interceptors.response.use(
   }
 );
 
-export default adminApi;
+export default techApi;

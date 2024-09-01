@@ -34,6 +34,10 @@ const LoginPage: React.FC = () => {
       const userDetails = {
         email: response.userDetails.email,
         name: response.userDetails.userName,
+        userName: response.userDetails.userName,
+        address: response.userDetails.address,
+        gender: response.userDetails.gender,
+        profilePhotoUrl: response.userDetails.profilePhotoUrl,
       };
       setLoading(false);
       if (response.success)  {
