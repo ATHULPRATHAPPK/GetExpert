@@ -4,13 +4,12 @@ import TechRoutes from './routes/technicianRoutes';
 import AdminRoutes from './routes/adminRoutes';
 import UserRoutes from './routes/userRoutes';
 
-
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
         {/* User Routes */}
-        <Route path="/*" element={<UserRoutes />} />
+        <Route path="/" element={<UserRoutes />} />
 
         {/* Admin Routes */}
         <Route path="/admin/*" element={<AdminRoutes />} />

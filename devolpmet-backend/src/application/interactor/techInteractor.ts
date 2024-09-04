@@ -139,7 +139,7 @@ export class TechIntractor implements ITechInteractor {
     console.log("reached intractor...");
     console.log("body", body);
 
-    // Upload files to Cloudinary
+ 
     const uploadedProfilePhoto = file.profilePhoto?.[0]?.path
       ? this.cloudinary.uploadImage(file.profilePhoto[0].path)
       : Promise.resolve(null);
@@ -163,6 +163,8 @@ export class TechIntractor implements ITechInteractor {
       : Promise.resolve(null);
 
     // Await all uploads
+    
+    
     const [
       profilePhotoUrl,
       idProofUrl,
@@ -182,7 +184,8 @@ export class TechIntractor implements ITechInteractor {
     if (!existingTech) {
       throw new Error("Technician not found.");
     }
-
+console.log("profilePhotoUrl?.secure_url ",profilePhotoUrl?.secure_url );
+console.log("profilePhotoUrl?.secure_url ",idProofUrl?.secure_url )
     // Prepare the update data according to the updated schema
     const updateData = {
       address: {
@@ -231,7 +234,8 @@ export class TechIntractor implements ITechInteractor {
     console.log(data,"data");
     
     const existingUser = await this.repository.findTech(data.email);
-
+    console.log("existingUser",existingUser);
+    
     if (!existingUser) {
       throw new Error("User already exists");
     }
@@ -239,6 +243,10 @@ export class TechIntractor implements ITechInteractor {
     documentSubmited: existingUser.documentSubmited,
     email:existingUser.email,
     techName:existingUser.userName,
+    documentReject:existingUser.documentReject,
+    rejectReson:existingUser.rejectReson,
+    verified:existingUser.verified,
+   
   }
     
   }

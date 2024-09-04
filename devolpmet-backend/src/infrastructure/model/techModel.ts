@@ -9,6 +9,8 @@ export interface ITechDocument extends Document {
     updatedAt: Date;
     blocked: boolean;
     verified: boolean;
+    documentReject:boolean;
+    rejectReson:string;
     address: {
         place: string;
         city: string;
@@ -53,6 +55,14 @@ const techSchema: Schema = new Schema<ITechDocument>({
     verified: {
         type: Boolean,
         default: false,
+    },
+    documentReject:{
+        type: Boolean,
+        default: false,
+    },
+    rejectReson:{
+        type: String,
+        required: false,
     },
     address: {
         place: {

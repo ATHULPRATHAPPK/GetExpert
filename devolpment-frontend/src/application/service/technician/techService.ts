@@ -1,8 +1,6 @@
 import techApi from "../../../infrastructure/api/tech/techApi";
 
 
-
-
 export const documentSubmition = async (data:any)=>{
     console.log("function called",data);
     

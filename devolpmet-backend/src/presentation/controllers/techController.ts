@@ -71,7 +71,7 @@ export class TechConteoller{
     try {
 
       const updateResult  =  await this.techInteractor.documentUpdate(req.body,req.files)
-      console.log(updateResult);
+      console.log("updateResult",updateResult);
 
       if(updateResult){
         const updated :boolean= true
@@ -86,6 +86,7 @@ export class TechConteoller{
       next(error);
     }
   };
+  
   
  async techDetails(req:Request,res:Response,next:NextFunction){
   try{

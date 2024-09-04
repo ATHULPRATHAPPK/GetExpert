@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 interface MenuItem {
   path: string;
@@ -17,20 +17,24 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ title, menuItems, className, classElements }) => {
   return (
     <div className={`sidebar bg-white text-gray-900 h-screen p-6 shadow-lg ${className}`}>
-     <h2 className={`text-2xl font-bold mb-8 ${classElements}`}>
-  {title} Dashboard
-</h2>
+      <h2 className={`text-2xl font-bold mb-8 ${classElements}`}>
+        {title} Dashboard
+      </h2>
 
       <ul className="space-y-2">
         {menuItems.map((item, index) => (
           <li key={index} className="group">
-            <Link
+            <NavLink
               to={item.path}
-              className={`flex items-center p-3 rounded-lg text-base font-medium border  ${classElements}`}
+              className={({ isActive }) =>
+                `flex items-center p-3 rounded-lg text-base font-medium border ${
+                  isActive ? 'bg-gray-500 text-white' : classElements
+                }`
+              }
             >
               <span className="mr-3">{item.icon}</span>
               {item.label}
-            </Link>
+            </NavLink>
           </li>
         ))}
         <li>

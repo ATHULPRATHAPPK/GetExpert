@@ -23,5 +23,6 @@ const adminController = new AdminController(adminInteractor);
 
 //routes 
 adminRouter.post('/login',adminController.onLogin.bind(adminController))
-
+adminRouter.get('/tech-data',adminController.techData.bind(adminController))
+adminRouter.post('/tech-approve',adminController.techApprove.bind(adminController))
 export default adminRouter
