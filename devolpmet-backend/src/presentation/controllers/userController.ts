@@ -103,6 +103,52 @@ async userLogin(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+  //=========================================available tech=================//
 
-  
+
+async serviceRequire(req:Request,res:Response,next:NextFunction){
+  try{
+  console.log("body",req.body.name);
+  const result = await this.userInteractor.services(req.body.name,req.body.email)
+  console.log(result,"result");
+  if(result){
+    return res.status(200).json({status:true,result});
+  }else{
+    return res.status(401).json({status:false});
+  }
+} catch (error) {
+  console.error("Error during reaching userprofile", error);
+  next(error);
+}
+}
+
+async serviceSelected(req: Request, res: Response, next: NextFunction) {
+  try {
+    console.log("Request body:", req.body);
+    const result = await this.userInteractor.findTech(req.body);
+
+    console.log("Available technicians:", result);
+    if (result && result.length > 0) {
+      return res.status(200).json({ status: true, result });
+    } else {
+      return res.status(404).json({ status: false, message: "No technicians found." });
+    }
+  } catch (error) {
+    console.error("Error finding technicians:", error);
+    next(error);
+  }
+} 
+
+async servicePayment(req:Request, res:Response, next:NextFunction){
+
+  console.log("reached.. controller",req.body);
+  const result = await this.userInteractor.bookingConfirm(req.body.techData,req.body.bookingData);
+  if(result.status){
+
+    return res.status(200).json(result);
+  }else{
+    return res.status(404).json({ status: false, message: "booking failed" });
+  }
+}
+
 }

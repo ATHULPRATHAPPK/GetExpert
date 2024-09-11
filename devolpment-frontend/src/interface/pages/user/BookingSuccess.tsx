@@ -1,11 +1,19 @@
-import React from 'react';
+// In BookingSuccess.js
+import { useLocation } from 'react-router';
 import { FaCheckCircle, FaHome, FaTicketAlt } from 'react-icons/fa';
 import Navbar from '../../components/Navbar';
 
 const BookingSuccess: React.FC = () => {
+  const location = useLocation();
+  const { bookingDetails, technicianDetails } = location.state || {};
+
+  if (!bookingDetails || !technicianDetails) {
+    return <p>Booking details not available.</p>;
+  }
+
   return (
     <div className="bg-gradient-to-b from-orange-100 to-gray-100 min-h-screen flex flex-col items-center pt-24">
-      <Navbar/>
+      <Navbar />
       <div className="max-w-lg w-full bg-white shadow-2xl rounded-2xl p-8">
         <div className="flex justify-center mb-6">
           <FaCheckCircle className="text-green-500 text-6xl" />
@@ -17,15 +25,15 @@ const BookingSuccess: React.FC = () => {
           <h3 className="text-center text-xl font-semibold text-gray-700 mb-4">Ticket Information <FaTicketAlt className="inline-block text-orange-500" /></h3>
 
           <div className="text-gray-700">
-            <p className="text-center text-lg font-bold mb-4">Ticket Number: <span className="text-orange-500">1112345678</span></p>
+            <p className="text-center text-lg font-bold mb-4">Ticket Number: <span className="text-orange-500">{bookingDetails._id}</span></p>
 
             <div className="border-t border-gray-300 my-4"></div>
 
             <div className="mb-4">
-              <p><strong>Technician Name:</strong> Xavier M</p>
-              <p><strong>Technician ID:</strong> 123424422</p>
-              <p><strong>Service:</strong> Electrician</p>
-              <p><strong>Booking Date:</strong> <span className="text-red-500">11:00 AM</span> on <span className="text-red-500">Friday, 23rd May</span></p>
+              <p><strong>Technician Name:</strong> {technicianDetails.userName}</p>
+              <p><strong>Technician ID:</strong> {technicianDetails._id}</p>
+              <p><strong>Service:</strong> {bookingDetails.service}</p>
+              <p><strong>Booking Date:</strong> <span className="text-red-500">{bookingDetails.time}</span> on <span className="text-red-500">{bookingDetails.date}</span></p>
             </div>
 
             <div className="border-t border-gray-300 my-4"></div>

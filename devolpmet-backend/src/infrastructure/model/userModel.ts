@@ -18,12 +18,7 @@ export interface IuserDocument extends Document{
     verified:boolean
 }
 
-const addressSchema: Schema = new Schema<UserAddress>({
-    buildingNumber: { type: String, required: true },
-    city: { type: String, required: true },
-    pincode: { type: String, required: true },
-    state: { type: String, required: true }
-});
+
 
 const userSchema:Schema = new Schema<IuserDocument>(
     {
@@ -47,7 +42,10 @@ const userSchema:Schema = new Schema<IuserDocument>(
             type: Boolean,
             default: false
         },
-        address: [addressSchema],
+        address: {
+            type:String,
+            required:false
+        },
         phone: {
             type: String
         },

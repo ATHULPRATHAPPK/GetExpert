@@ -3,11 +3,13 @@ import { userReducer } from "./user/userSlice";
 import { adminReducer } from "./admin/adminSlice";
 import { technicianReducer } from "./technician/technicianSlice"; // Import technician reducer
 
+
 const store = configureStore({
     reducer: {
         user: userReducer,
         admin: adminReducer,
         technician: technicianReducer, 
+       
     },
 });
 

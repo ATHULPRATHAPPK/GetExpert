@@ -1,10 +1,17 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { FaBolt, FaWrench, FaHome, FaPaintBrush, FaCouch, FaLeaf, FaTshirt, FaSprayCan, FaBroom } from "react-icons/fa";
 import { FaStar, FaHandshake, FaChalkboardTeacher, FaLevelUpAlt } from "react-icons/fa";
 
+
 const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const selectService = async (service: string)=>{
+  navigate(`/booking?service=${encodeURIComponent(service)}`);
+ 
+  }
   return (
     <div>
       <Navbar />
@@ -31,11 +38,13 @@ const Home: React.FC = () => {
                     { name: "Laundry", icon: <FaTshirt className="text-orange-600 hover:text-orange-800 transition-transform transform hover:scale-125" size={30} /> },
                     { name: "Gardening", icon: <FaLeaf className="text-orange-600 hover:text-orange-800 transition-transform transform hover:scale-125" size={30} /> },
                     { name: "Home Cleaning", icon: <FaBroom className="text-orange-600 hover:text-orange-800 transition-transform transform hover:scale-125" size={30} /> },
+                    
                   ].map(({ name, icon }) => (
                     <div
                       key={name}
                       className="bg-white p-6 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105 hover:shadow-xl flex flex-col items-center"
-                    >
+                      onClick={() => selectService(name)}
+                   >
                       {icon}
                       <h3 className="text-l font-semibold mt-2 mb-1">{name}</h3>
                     </div>
